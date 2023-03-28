@@ -13,10 +13,7 @@ with open('conversation.yaml', 'r', encoding='utf-8') as getTalk:
     talk = list(yaml.safe_load_all(getTalk))
 
     # 存入ChatRecord
-    if len(talk) > 0:
-        ChatRecord = talk[0]
-    else:
-        ChatRecord = []
+    ChatRecord = talk[0] if len(talk) > 0 else []
 
 
 @bot.command(regex=r'[\s\S]*')
@@ -26,13 +23,13 @@ async def chatgpt(msg: Message):
     # if msg.extra["channel_name"] in ChannelList and 'BOT_ID' in msg.extra['mention']:
 
     # 去除消息中@机器人的部分
-    UserContent = msg.content.replace('(met)BOT_ID(met) ', '')
+    chat = msg.content.replace('(met)BOT_ID(met) ', '')
 
     # 往聊天记录添加刚收到的消息
     ChatRecord.append(
         {
             "role": "user",
-            "content": UserContent
+            "content": chat
         }
     )
 
@@ -47,11 +44,7 @@ async def chatgpt(msg: Message):
 
     # 写入聊天记录 聊天记录比文件更长则覆盖存入文件 短则追加
     if len(ChatRecord) > len(talk):
-        with open('conversation.yaml', 'w', encoding='utf-8') as writeTalk:
-            yaml.dump(ChatRecord, writeTalk, allow_unicode=True)
-
-    else:
-        with open('conversation.yaml', 'a', encoding='utf-8') as writeTalk:
+        with open('conversation.yaml', 'w' if len(ChatRecord) > len(talk) else 'a', encoding='utf-8') as writeTalk:
             yaml.dump(ChatRecord, writeTalk, allow_unicode=True)
 
 
