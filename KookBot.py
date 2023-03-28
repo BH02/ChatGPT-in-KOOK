@@ -8,7 +8,7 @@ bot = Bot(token='KOOK_BOT_TOKEN')
 openai.api_key = 'OPENAI_API_KEY'
 GPTmessage = []
 
-@bot.command(regex=r'.*?.*')
+@bot.command(regex=r'[\s\S]*')
 async def chatgpt(msg:Message):
     GPTmessage.append(
       {
