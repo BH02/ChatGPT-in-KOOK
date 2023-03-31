@@ -43,9 +43,8 @@ async def chatgpt(msg: Message):
     await msg.reply(completion.choices[0].message.content)
 
     # 写入聊天记录 聊天记录比文件更长则覆盖存入文件 短则追加
-    if len(ChatRecord) > len(talk):
-        with open('conversation.yaml', 'w' if len(ChatRecord) > len(talk) else 'a', encoding='utf-8') as writeTalk:
-            yaml.dump(ChatRecord, writeTalk, allow_unicode=True)
+    with open('conversation.yaml', 'w' if len(ChatRecord) > len(talk) else 'a', encoding='utf-8') as writeTalk:
+        yaml.dump(ChatRecord, writeTalk, allow_unicode=True)
 
 
 bot.run()
