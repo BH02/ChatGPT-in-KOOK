@@ -10,10 +10,10 @@ openai.api_key = 'OPENAI_API_KEY'
 
 # 读取本地聊天记录
 with open('conversation.yaml', 'r', encoding='utf-8') as getTalk:
-    talk = list(yaml.safe_load_all(getTalk))
+    talk = list(yaml.safe_load_all(getTalk))[0]
 
     # 存入ChatRecord
-    ChatRecord = talk[0] if len(talk) > 0 else []
+    ChatRecord = talk if len(talk) < 20 else talk[-20:]
 
 
 @bot.command(regex=r'[\s\S]*')
@@ -25,13 +25,10 @@ async def chatgpt(msg: Message):
     # 去除消息中@机器人的部分
     chat = msg.content.replace('(met)BOT_ID(met) ', '')
 
+    latestchat = {"role": "user", "content": chat}
+
     # 往聊天记录添加刚收到的消息
-    ChatRecord.append(
-        {
-            "role": "user",
-            "content": chat
-        }
-    )
+    ChatRecord.append(latestchat)
 
     # 调用API
     completion = openai.ChatCompletion.create(
@@ -42,9 +39,9 @@ async def chatgpt(msg: Message):
     # 机器人以回复的形式发送消息
     await msg.reply(completion.choices[0].message.content)
 
-    # 写入聊天记录 聊天记录比文件更长则覆盖存入文件 短则追加
-    with open('conversation.yaml', 'w' if len(ChatRecord) > len(talk) else 'a', encoding='utf-8') as writeTalk:
-        yaml.dump(ChatRecord, writeTalk, allow_unicode=True)
+    # 往聊天记录文件里追加最新的消息
+    with open('conversation.yaml', 'a', encoding='utf-8') as writeTalk:
+        yaml.dump([latestchat], writeTalk, allow_unicode=True)
 
 
 bot.run()
