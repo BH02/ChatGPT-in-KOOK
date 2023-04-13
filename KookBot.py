@@ -18,14 +18,13 @@ async def gpt(msg: Message, *command):
         # 专属聊天拿用户的ID作为文件名
         ChatFile = 'ChatRecord/chat-' + msg.extra['author']['id'] + '.yaml'
         chat = command[1]
+    elif command:
+        # 不是专属聊天拿频道ID作为文件名
+        ChatFile = 'ChatRecord/chat-' + msg.target_id + '.yaml'
+        chat = command[0]
     else:
-        if command:
-            # 不是专属聊天拿频道ID作为文件名
-            ChatFile = 'ChatRecord/chat-' + msg.target_id + '.yaml'
-            chat = command[0]
-        else:
-            await msg.reply('消息内容为空')
-            return
+        await msg.reply('消息内容为空')
+        return
 
     # 判断是否存在旧的聊天记录，有则读取，无则新建
     if os.path.exists(ChatFile):
