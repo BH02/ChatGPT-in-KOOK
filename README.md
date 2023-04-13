@@ -1,5 +1,8 @@
 # ChatGPT-in-KOOK
 
+## 简介
+这里只是机器人的一部分代码
+
 ## 依赖
 ```
 pip install khl.py
